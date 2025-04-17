@@ -1,4 +1,4 @@
-export default class HashMap {
+export default class HashSet {
   constructor() {
     this.loadFactor = 0.8;
     this.capacity = 16;
@@ -7,40 +7,24 @@ export default class HashMap {
 
   hash(key) {
     let hashCode = 0;
-  
     const primeNumber = 31;
     for (let i = 0; i < key.length; i++) {
       hashCode = (primeNumber * hashCode + key.charCodeAt(i)) % this.capacity;
     }
-
     return hashCode;
-  } 
-
-  set(key, value) {
-    const entry = this.hash(key);
-    const bucket = this.buckets[entry];
-
-    for (let e of bucket) {
-      if (e.key === key) {
-        e.value = value;
-        return
-      }
-    }
-
-    bucket.push({ key, value });
   }
 
-  get(key) {
+  add(key) {
     const entry = this.hash(key);
     const bucket = this.buckets[entry];
 
     for (let e of bucket) {
-      if (e.key === key) {
-        return e.value
+      if (e === key) {
+        return;
       }
     }
 
-    return null;
+    bucket.push(key);
   }
 
   has(key) {
@@ -48,7 +32,7 @@ export default class HashMap {
     const bucket = this.buckets[entry];
 
     for (let e of bucket) {
-      if (e.key === key) {
+      if (e === key) {
         return true;
       }
     }
@@ -61,7 +45,7 @@ export default class HashMap {
     const bucket = this.buckets[entry];
 
     for (let i = 0; i < bucket.length; i++) {
-      if (bucket[i].key === key) {
+      if (bucket[i] === key) {
         bucket.splice(i, 1);
         return true;
       }
@@ -70,7 +54,7 @@ export default class HashMap {
     return false;
   }
 
-  length() {
+  size() {
     let count = 0;
     for (const bucket of this.buckets) {
       count += bucket.length;
@@ -83,33 +67,12 @@ export default class HashMap {
   }
 
   keys() {
-    let keys = []
+    const allKeys = [];
     for (const bucket of this.buckets) {
-      for (const { key } of bucket) {
-        keys.push(key)
+      for (const key of bucket) {
+        allKeys.push(key);
       }
     }
-    return keys;
+    return allKeys;
   }
-
-  values() {
-    let values = []
-    for (const bucket of this.buckets) {
-      for (const { value } of bucket) {
-        values.push(value)
-      }
-    }
-    return values;
-  }
-
-  entries() {
-    let entries = []
-    for (const bucket of this.buckets) {
-      for (const entry of bucket) {
-        entries.push([entry.key, entry.value])
-      }
-    }
-    return entries;
-  }
-
 }
